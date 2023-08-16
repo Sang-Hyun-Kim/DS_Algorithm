@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <vector>
-
+//#include <list>
+#include "list.h"
 // 동적배열만들기
 
 using namespace std;
@@ -94,19 +95,46 @@ private:
 
 int main()
 {
-    //Vector<int> v;
-    vector<int> v;
+    ////Vector<int> v;
+    //vector<int> v;
 
-    //v.resize(10);
+    ////v.resize(10);
 
-    for (int i = 0; i < 100; i++)
+    //for (int i = 0; i < 100; i++)
+    //{
+    //    v.push_back(i);
+    //    cout << v[i] << " " << v.size() << " " << v.capacity() << endl;
+    //   
+    //}
+    //v.clear();
+    //cout << v.size() << " " << v.capacity() << endl;
+
+    List<int> li;
+    // 중간 삭제 실습
+    List<int>::iterator eraseIt;
+
+    for (int i = 0; i < 10; i++)
     {
-        v.push_back(i);
-        cout << v[i] << " " << v.size() << " " << v.capacity() << endl;
-       
+        if (i == 5)
+        {
+            // 중간 삭제 지점을 기억
+            eraseIt = li.insert(li.end(), i);
+
+        }
+        else
+        {
+            li.push_back(i);
+        }
     }
-    v.clear();
-    cout << v.size() << " " << v.capacity() << endl;
+    li.pop_back();
+    // 중간에 삭제해버리기
+    li.erase(eraseIt);
+
+    for (List<int>::iterator it = li.begin(); it != li.end(); it++)
+    {
+        cout << (*it) << endl;
+
+    }
 
     // 벡터 사용시 미리 공간할당 후 사용하는게 더 효율적이다(반복할 필요가없음)
     // resize시에는 해당 공간만큼 reserve했을때처럼 size,capacity가 함께 증가
