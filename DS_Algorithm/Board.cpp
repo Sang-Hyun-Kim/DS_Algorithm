@@ -3,6 +3,7 @@
 #include "ConsoleHelper.h"
 #include "Player.h"
 
+
 const char* TILE = "бс";
 
 Board::Board()

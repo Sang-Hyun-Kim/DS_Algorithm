@@ -3,6 +3,9 @@
 //#include <list>
 #include "list.h"
 // 동적배열만들기
+#include "Stack.h"
+
+#include "Queue.h"
 
 using namespace std;
 
@@ -109,36 +112,71 @@ int main()
     //v.clear();
     //cout << v.size() << " " << v.capacity() << endl;
 
-    List<int> li;
-    // 중간 삭제 실습
-    List<int>::iterator eraseIt;
+    //List<int> li;
+    //// 중간 삭제 실습
+    //List<int>::iterator eraseIt;
 
-    for (int i = 0; i < 10; i++)
+    //for (int i = 0; i < 10; i++)
+    //{
+    //    if (i == 5)
+    //    {
+    //        // 중간 삭제 지점을 기억
+    //        eraseIt = li.insert(li.end(), i);
+
+    //    }
+    //    else
+    //    {
+    //        li.push_back(i);
+    //    }
+    //}
+    //li.pop_back();
+    //// 중간에 삭제해버리기
+    //li.erase(eraseIt);
+
+    //for (List<int>::iterator it = li.begin(); it != li.end(); it++)
+    //{
+    //    cout << (*it) << endl;
+
+    //}
+
+    //// 벡터 사용시 미리 공간할당 후 사용하는게 더 효율적이다(반복할 필요가없음)
+    //// resize시에는 해당 공간만큼 reserve했을때처럼 size,capacity가 함께 증가
+    //// 처음부터 resize시, 전부 빈값으로 채워짐(int의 경우 0)
+    //// capacity를 100으로, 자료를 100개 넣고 resize(10)했을때
+    //// capacity는 그대로지만 자료는 첫 10개만 남고 다 사라짐
+
+    //// 스택 실습
+    //Stack<int> s;
+    //s.push(1);
+    //s.push(2);
+    //s.push(3);
+
+    //cout << s.size() << endl;
+    //while (s.empty() == false)
+    //{
+    //    int data = s.top();
+    //    s.pop();
+
+    //    cout << data << endl;
+    //}
+
+    //cout << s.size()<< endl;
+
+
+    // Queue 실습
+    ArrayQueue<int> q;
+
+    for (int i = 0; i < 100; i++)
     {
-        if (i == 5)
-        {
-            // 중간 삭제 지점을 기억
-            eraseIt = li.insert(li.end(), i);
-
-        }
-        else
-        {
-            li.push_back(i);
-        }
+        q.push(i);
     }
-    li.pop_back();
-    // 중간에 삭제해버리기
-    li.erase(eraseIt);
-
-    for (List<int>::iterator it = li.begin(); it != li.end(); it++)
+    while (q.empty() == false)
     {
-        cout << (*it) << endl;
-
+        int value = q.front();
+        q.pop();
+        cout << value << endl;
     }
 
-    // 벡터 사용시 미리 공간할당 후 사용하는게 더 효율적이다(반복할 필요가없음)
-    // resize시에는 해당 공간만큼 reserve했을때처럼 size,capacity가 함께 증가
-    // 처음부터 resize시, 전부 빈값으로 채워짐(int의 경우 0)
-    // capacity를 100으로, 자료를 100개 넣고 resize(10)했을때
-    // capacity는 그대로지만 자료는 첫 10개만 남고 다 사라짐
+
+    int size = q.size();
 }
