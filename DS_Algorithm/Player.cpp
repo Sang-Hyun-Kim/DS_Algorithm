@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Player.h"
 #include "Board.h"
-
+#include <stack>
 
 void Player::Init(Board* board)
 {
@@ -78,6 +78,39 @@ void Player::Init(Board* board)
 			}*/
 		}
 	}
+
+	// 걸어왔던 길 복기
+	stack<Pos> trail;
+
+	for (int i = 0; i < _path.size() - 1; i++)
+	{
+		// Stack 공백 체크 후, 내가 다음으로 가야할 길과 일치하는지 체크
+		if (trail.empty() == false && trail.top() == _path[i + 1])
+		{
+			// 돌아온 길과 가야할 길이 일치한다면 저장했던 진로에서 Pop 시켜주자
+			trail.pop();
+		}
+		else
+			trail.push(_path[i]);
+	}
+
+	// 목적지 도착
+	if (_path.empty() == false)
+	{
+		trail.push(_path.back());
+	} // 연산 순서상 도착하면 끝나기때문에 일단 넣자
+
+	// 스택에 거꾸로 저장되어있기때문에 출력을 위해 옮겨서 저장
+	vector<Pos> temppath;
+	while (trail.empty() == false)
+	{
+		temppath.push_back(trail.top());
+		trail.pop();
+	}
+
+	std::reverse(temppath.begin(), temppath.end());
+
+	_path = temppath;
 }
 
 void Player::Update(uint64 deltaTick)
