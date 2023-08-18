@@ -1,19 +1,52 @@
 #include "pch.h"
 #include "Player.h"
 #include "Board.h"
-#include <stack>
+
 
 void Player::Init(Board* board)
 {
+	// 시작 지점 배치
 	_pos = board->GetEnterPos();
 	_board = board;
+	
+	// 길찾기 수행
+	//RightHand();
+	Bfs();
+}
+
+void Player::Update(uint64 deltaTick)
+{
+	if (_pathIndex >= _path.size())
+	{
+		return;
+	}
+	_sumTick += deltaTick;
+	if (_sumTick >= MOVE_TICK)
+	{
+		_sumTick = 0;
+	}
+	_pos = _path[_pathIndex];
+	_pathIndex++;
+
+}
+
+bool Player::CanGo(Pos pos)
+{
+	TileType tileType = _board->GetTileType(pos);
+	return tileType == TileType::EMPTY;
+}
+
+void Player::RightHand()
+{
+
+
 	Pos pos = _pos;
 
 	_path.clear();
 	_path.push_back(pos);
 
 	// 목적지 좌표 도착전까지 계속 실행
-	Pos dest = board->GetExitPos();
+	Pos dest = _board->GetExitPos();
 	Pos front[4] =
 	{
 		Pos {-1,0},//UP
@@ -111,26 +144,108 @@ void Player::Init(Board* board)
 	std::reverse(temppath.begin(), temppath.end());
 
 	_path = temppath;
-}
-
-void Player::Update(uint64 deltaTick)
-{
-	if (_pathIndex >= _path.size())
-	{
-		return;
-	}
-	_sumTick += deltaTick;
-	if (_sumTick >= MOVE_TICK)
-	{
-		_sumTick = 0;
-	}
-	_pos = _path[_pathIndex];
-	_pathIndex++;
 
 }
 
-bool Player::CanGo(Pos pos)
+void Player::Bfs()
 {
-	TileType tileType = _board->GetTileType(pos);
-	return tileType == TileType::EMPTY;
+	Pos pos = _pos;
+
+	
+	// 목적지 좌표 도착전까지 계속 실행
+	Pos dest = _board->GetExitPos();
+	Pos front[4] =
+	{
+		Pos {-1,0},//UP
+		Pos {0,-1},//Left
+		Pos {1,0},//Down
+		Pos {0,1},//Right
+	};
+
+	// BFS로 구현하면서 필요한점
+	// 1. 다음 갈 길을 이미 발견했는가 기록하는 자료구조
+	// 2. 다음 탐색 대상을 넣을 큐
+	// 3. dest(도착지점)을 찾을 때까지 
+
+	// 보드의 전체적인 사이즈를 계산한 뒤(새롭게 구현)
+	// 그 크기만큼 발견 여부 저장 변수 선언
+	const int32 size = _board->GetSize();
+
+	// 크기가 size x size인 bool형 이차원 배열 자료형을 false로 전부 초기화
+	vector<vector<bool>> discovered(size, vector<bool>(size, false));
+	// 목적지까지의 좌표의 이전 좌표를 기록할 2차원 배열
+	map<Pos, Pos> parent;
+
+	// 이때 주의할 점이 Map은 데이터를 받을때마다
+	// 레드 블랙 트리를 사용하여 데이터를 정렬된 상태로 유지하기 때문에 비교 연산이 필요해진다.
+	// 직접 만든 자료형인 Pos에 대해 <(비교) 연산자를 만들어줘야한다.
+
+	// 정점 정보를 Queue에 저장
+	queue<Pos> q;
+
+	q.push(pos);
+	discovered[pos.y][pos.x] = true;
+	// 시작점은 자기자신이 부모로 설정
+
+	parent[pos] = pos;
+
+
+	while (q.empty() == false)
+	{
+		pos = q.front();
+		q.pop();
+
+		// 방문!
+		if (pos == dest)
+		{
+			// 목적지 도착 탈출
+			break;
+		}
+		// 아직 길찾기
+		// 4개의 방향에 대해 하나씩 시도
+		for (int32 dir = 0; dir < 4; dir++)
+		{
+			Pos nextPos = pos + front[dir];
+
+			// 갈 수 있는 지역이 맞는지 확인
+			if (CanGo(nextPos) == false)
+			{
+				continue;
+			}
+
+			// 갈 수 있다면
+			// 이미 발견한 지역이면 Queue에 넣을 필요가 없음
+			if (discovered[nextPos.y][nextPos.x])
+			{
+				continue;
+			}
+
+			// 갈 수 있고 모른다면 Queue에 넣고 발견했다고 표시
+			q.push(nextPos);
+			discovered[nextPos.y][nextPos.x] = true;
+			parent[nextPos] = pos;
+
+
+		}
+	}
+
+	// 경로 계산 코드
+	_path.clear();
+
+	// 저장해놨던 경로인 Parent를 역으로
+	pos = dest;
+	while (true)
+	{
+		_path.push_back(pos);
+
+		// 시작점으로 도착하면 종료
+		if (pos == parent[pos])
+			break;
+		// pos =dest
+		// 한칸씩 뒤로 거슬러 올라간다.
+		pos = parent[pos];
+	}
+	// 다시 역순으로 배열
+	// 이때 
+	std::reverse(_path.begin(), _path.end());
 }

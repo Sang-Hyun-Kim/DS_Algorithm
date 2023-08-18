@@ -4,6 +4,10 @@
 #include <Windows.h>
 #include <iostream>
 #include <vector>
+#include <stack>
+#include <queue>
+#include <map>
+
 using namespace std;
 
 
@@ -17,6 +21,15 @@ struct Pos
 	bool operator!=(Pos& other)
 	{
 		return !(*this == other);
+	}
+	// 임의로 작성
+	bool operator<(const Pos& other) const
+	{
+		if (y != other.y)
+		{
+			return y < other.y;
+		}
+		return x < other.x;
 	}
 
 	Pos operator+(Pos& other)

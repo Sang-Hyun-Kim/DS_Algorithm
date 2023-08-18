@@ -19,6 +19,12 @@ public:
 	Pos GetPos() { return _pos; }
 
 	bool CanGo(Pos pos);
+
+private:
+	// 기존 오른벽집기 길찾기 보관
+	void RightHand();
+	void Bfs();
+
 private:
 	Pos _pos = {};
 
