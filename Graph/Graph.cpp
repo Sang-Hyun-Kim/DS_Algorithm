@@ -4,6 +4,7 @@
 #include <stack>
 #include <queue>
 
+#include "DFS.h"
 using namespace std;
 
 void CreateGraph_1()
@@ -121,11 +122,22 @@ void CreateGraph_3()
 
 int main()
 {
-    CreateGraph_1();
+   /* CreateGraph_1();
     CreateGraph_2();
-    CreateGraph_3();
+    CreateGraph_3();*/
+    DFS dfsG;
+    dfsG.CreateGraph();
+    dfsG.DFS_ALL();
+
+    DFS dfsGC;
+    dfsGC.CreateGraph2();
+    dfsGC.DFS_Search2(0);
 }
 
 // 그래프: 데이터를 담은 정점과 연결 상태, 방향, 가중치 등을 담은 간선으로 이루어짐
 // 정점이 많지않고 간선도 적으면 저런방식이 되지만
 // SNS처럼 정점도, 간선도 많은 경우엔 알고리즘 개선이 필요
+
+// 탐색
+// DFS(Depth First Search) 깊이 우선 탐색
+// BFS(Breadth First Search) 너비 우선탐색
