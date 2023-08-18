@@ -5,6 +5,7 @@
 #include <queue>
 
 #include "DFS.h"
+#include "BFS.h"
 using namespace std;
 
 void CreateGraph_1()
@@ -125,13 +126,22 @@ int main()
    /* CreateGraph_1();
     CreateGraph_2();
     CreateGraph_3();*/
-    DFS dfsG;
-    dfsG.CreateGraph();
-    dfsG.DFS_ALL();
 
-    DFS dfsGC;
-    dfsGC.CreateGraph2();
-    dfsGC.DFS_Search2(0);
+    // DFS
+    // DFS dfsG;
+    // dfsG.CreateGraph();
+    // dfsG.DFS_ALL();
+
+    // DFS dfsGC;
+    // dfsGC.CreateGraph2();
+    // dfsGC.DFS_Search2(0);
+
+    // BFS
+    BFS b;
+    b.CreateGraph2();
+    b.BFSearch_2(0);
+    //b.CreateGraph2();
+    //b.BFSearch_2(0);
 }
 
 // 그래프: 데이터를 담은 정점과 연결 상태, 방향, 가중치 등을 담은 간선으로 이루어짐
