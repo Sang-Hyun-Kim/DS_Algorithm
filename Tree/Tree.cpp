@@ -3,6 +3,7 @@
 #include <list>
 #include <stack>
 #include <queue>
+#include "PriorityQueue.h"
 using namespace std;
 
 using NodeRef = shared_ptr<struct Node>;
@@ -91,10 +92,39 @@ int GetHeight(NodeRef root)
 
 int main()
 {
-	NodeRef root = CreateTree();
+	//NodeRef root = CreateTree();
 
-	PrintTree(root, 0);
+	PriorityQueue<int> pq;
+	PriorityQueue<int, vector<int>, std::greater<int>> pq1; // 작은 값이 부모로, 가장 작은값이 root
 
-	int height = GetHeight(root);
-	cout << "Tree Height : " << height << endl;
+	/*PrintTree(root, 0);*/
+
+	//int height = GetHeight(root);
+	//cout << "Tree Height : " << height << endl;
+	pq.push(300);
+	pq.push(100);
+	pq.push(200);
+	pq.push(500);
+	pq.push(400);
+
+	pq1.push(300);
+	pq1.push(100);
+	pq1.push(200);
+	pq1.push(500);
+	pq1.push(400);
+	while (pq.empty() == false)
+	{
+		int value = pq.top();
+		pq.pop();
+
+		cout << value << endl;
+	}
+	cout << endl;
+	while (pq1.empty() == false)
+	{
+		int value = pq1.top();
+		pq1.pop();
+
+		cout << value << endl;
+	}
 }
