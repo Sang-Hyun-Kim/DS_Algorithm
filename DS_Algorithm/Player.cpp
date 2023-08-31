@@ -11,13 +11,17 @@ void Player::Init(Board* board)
 	
 	// 길찾기 수행
 	//RightHand();
-	Bfs();
+	//Bfs();
+	AStar();
 }
 
 void Player::Update(uint64 deltaTick)
 {
 	if (_pathIndex >= _path.size())
 	{
+		// 마지막까지 가면 재생성해서 길 다시찾게하기
+		_board->GenerateMap();
+		Init(_board);
 		return;
 	}
 	_sumTick += deltaTick;
@@ -234,6 +238,179 @@ void Player::Bfs()
 
 	// 저장해놨던 경로인 Parent를 역으로
 	pos = dest;
+	while (true)
+	{
+		_path.push_back(pos);
+
+		// 시작점으로 도착하면 종료
+		if (pos == parent[pos])
+			break;
+		// pos =dest
+		// 한칸씩 뒤로 거슬러 올라간다.
+		pos = parent[pos];
+	}
+	// 다시 역순으로 배열
+	// 이때 
+	std::reverse(_path.begin(), _path.end());
+}
+
+struct PQNode
+{
+	// 값 비교 후 저장을 위한 연산자 구현
+	bool operator<(const PQNode& other) const { return f < other.f; }
+	bool operator>(const PQNode& other) const { return f > other.f; }
+	int32	f;
+	int32	g;
+	Pos		ps;
+
+};
+
+void Player::AStar()
+{
+	// 다익스트라의 가중치 매기기 처럼
+	// A* 에서는 F = G + H , 최종 값 F가 작을 수록 좋고 경로에 따라 달라질 것
+	// G : 시작 점에서 해당 좌표까지 이동하는데 드는 비용, 작을 수 록 좋고 경로에 따라 변경 될 것
+	// H(Heuristic) = 목적지에서 얼마나 가까운지 (작을 수록 좋음, 고정)
+
+	Pos start = _pos;
+	
+	Pos dest = _board->GetExitPos();
+	enum
+	{
+		// DIR_COUNT = 4
+		DIR_COUNT = 8
+	}; // 대각선 사용안할 때 => 4, 사용할 때 => 8
+
+	Pos front[] =
+	{
+		Pos {-1,0},//UP
+		Pos {0,-1},//Left
+		Pos {1,0},//Down
+		Pos {0,1},//Right
+		// 대각선 추가
+		Pos { -1, -1}, // UP_LEFT
+		Pos { 1, -1}, // DOWN_LEFT
+		Pos { 1, 1}, // DOWN_RIGHT
+		Pos { -1, 1}, // UP_RIGHT
+	};
+
+	// 이동 비용
+	int32 cost[] =
+	{
+		10,
+		10,
+		10,
+		10, // 상 좌 하 우 는 10씩
+		14,
+		14,
+		14,
+		14 // 대각선 이동은 14
+	};
+
+	const int32 size = _board->GetSize();
+
+	// ClosedList, 지금까지 방문한 목록
+	// closed[y][x] => ((y,x)에 대해 방문했는지 여부
+	vector<vector<bool>> closed(size, vector<bool>(size, false));
+
+
+	// 2차원 배열 구현 후 초기화
+	// best[y][x] -> 지금까지 발견한 (y,x) 에 대한 가장 좋은 비용(작을 수록 좋음)
+	vector<vector<int32>> best(size, vector<int32>(size, INT32_MAX));
+
+	// 부모 추적용 
+	map<Pos, Pos> parent;
+
+	// Open List
+	priority_queue<PQNode, vector<PQNode>, greater<PQNode>> pq;
+	// F가 작은 순으로 나올 것
+	
+	
+	// 1) 예약, 발견 시스템 구현
+	// 2) 뒤늦게 더 좋은경로가 발견 될 수 있으니 예외 처리가 필수
+	// pair<int , POS> 로 점수와 좌표를 함께 관리할 수도 있음
+	
+	// 초기값
+	{
+		int32 g = 0;
+
+		// 임의 H 값 지정식
+		// 시작지점과 목표지점의 y,x 좌표 값의 절대값을 더 한다음
+		// 이동 단위가 10으로 떨어지므로 10을 곱한다.
+		int32 h = 10 * (abs(dest.y - start.y) + abs(dest.x - start.x));
+		pq.push(PQNode{ g+h, g, start}); // int f, int g, Pos pos
+		best[start.y][start.x] = g + h; // 비용 갱신
+		parent[start] = start; // 부모 노드 저장
+	}
+	// 사이즈가 커지면 연산에 부담이 생기니 vector가 아닌 map등으로 구현해보세요
+
+	// 탐색 예약 목록이 빌때까지 
+	while (pq.empty() == false)
+	{
+		// 제일 좋은 후보 찾기
+		// greater<PQNode> 인자를 넣어줬기 때문에 top으로 나오는 root에는 가장 작은 F값이
+		// 들어가 있을 것
+		PQNode node = pq.top();
+		pq.pop();
+
+		// 동일 좌표를  여러 경로로 찾아서, 더빠른 경로로 이미 방문된상태인 경우
+		// Closed를 통해 방문 스킵을 해야함(중요)
+		// Closed를 사용하든 best를 사용하든 상관 없음
+		// 어쩌피  기존에 들어있는 best의 값이 현재 구한 값보다 작다면 이미 방문한 것이 되므로.....
+		
+		// 1: Closed 사용
+		if (closed[node.ps.y][node.ps.x])
+			continue;
+
+		// 2: best를 사용
+		// 현재 좌표가 들어있는 F 값이 방금 계산한의 노드의 F보다 작을 경우
+		if (best[node.ps.y][node.ps.x] < node.f) 
+			continue;
+
+		// 방문 여부 체크
+		closed[node.ps.y][node.ps.x] = true;
+
+		//목적지 도착했으면 바로 종료
+		if (node.ps == dest)
+			break;
+
+		for (int32 dir = 0; dir < DIR_COUNT; dir++)
+		{
+			Pos nextPos = node.ps + front[dir];
+			// 다음 이동 좌표 계산
+			// 갈 수 있는지?
+			if (CanGo(nextPos) == false)
+				continue;
+			// 방문 체크
+			if (closed[nextPos.y][nextPos.x])
+				continue;
+
+			// 비용 계산
+			// nextPos(다음 좌표) 발견전 기존 노드(부모노드)인 node의 g값에, 방향이 결정된 좌표에 대한 이동 값을 더 하기
+			int32 g = node.g + cost[dir];
+			int32 h =  10 * (abs(dest.y - nextPos.y) + abs(dest.x - nextPos.x));
+			// 목적지가 다음 좌표에서 얼마나 멀어져있나?
+
+			// 다른 경로에서 더 빠른 길을 찾았다면 스킵
+			if (best[nextPos.y][nextPos.x] <= g + h) // 동점은 선착순 처리
+				continue;
+
+			// 이정도면 지금꺼가 제일 작은게 맞다!
+			// 그렇다면 예약 진행
+			best[nextPos.y][nextPos.x] = g + h;
+			pq.push(PQNode{g+h,g,nextPos});
+			parent[nextPos] = node.ps;
+
+		}
+	}
+
+
+	// 경로 계산 코드
+	Pos pos = dest;
+
+	_path.clear();
+	_pathIndex = 0;
+
 	while (true)
 	{
 		_path.push_back(pos);

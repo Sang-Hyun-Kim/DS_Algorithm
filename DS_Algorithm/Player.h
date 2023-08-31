@@ -24,7 +24,7 @@ private:
 	// 기존 오른벽집기 길찾기 보관
 	void RightHand();
 	void Bfs();
-
+	void AStar();
 private:
 	Pos _pos = {};
 
