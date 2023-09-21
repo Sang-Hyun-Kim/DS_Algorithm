@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graph", "Graph\Graph.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tree", "Tree\Tree.vcxproj", "{42AAA222-675E-4254-88CD-A0C3A996A677}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BinaryTree", "BinaryTree\BinaryTree.vcxproj", "{0061AFFE-A9C4-4359-A508-E9288ACCE04D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{42AAA222-675E-4254-88CD-A0C3A996A677}.Release|x64.Build.0 = Release|x64
 		{42AAA222-675E-4254-88CD-A0C3A996A677}.Release|x86.ActiveCfg = Release|Win32
 		{42AAA222-675E-4254-88CD-A0C3A996A677}.Release|x86.Build.0 = Release|Win32
+		{0061AFFE-A9C4-4359-A508-E9288ACCE04D}.Debug|x64.ActiveCfg = Debug|x64
+		{0061AFFE-A9C4-4359-A508-E9288ACCE04D}.Debug|x64.Build.0 = Debug|x64
+		{0061AFFE-A9C4-4359-A508-E9288ACCE04D}.Debug|x86.ActiveCfg = Debug|Win32
+		{0061AFFE-A9C4-4359-A508-E9288ACCE04D}.Debug|x86.Build.0 = Debug|Win32
+		{0061AFFE-A9C4-4359-A508-E9288ACCE04D}.Release|x64.ActiveCfg = Release|x64
+		{0061AFFE-A9C4-4359-A508-E9288ACCE04D}.Release|x64.Build.0 = Release|x64
+		{0061AFFE-A9C4-4359-A508-E9288ACCE04D}.Release|x86.ActiveCfg = Release|Win32
+		{0061AFFE-A9C4-4359-A508-E9288ACCE04D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
