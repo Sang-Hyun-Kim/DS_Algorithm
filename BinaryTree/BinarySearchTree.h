@@ -17,8 +17,6 @@ enum class Color
 	Black = 1,
 };
 
-
-
 struct Node
 {
 	Node* _parent = nullptr;
@@ -44,6 +42,8 @@ public:
 
 	// 값을 받고 그 값의 노드를 만들어서 BST에 넣어줌
 	void	Insert(int key);
+	// Red_Black_Tree 규칙을 검사하는 함수
+	void	InsertFixup(Node* node);
 	void	Delete(int key);
 	void	Delete(Node* node);
 	void	Print_Inorder() { Print_Inorder(_root); }
@@ -56,13 +56,22 @@ public:
 	Node*	Max(Node* node);
 	Node*	Next(Node* node);
 
+	// Red_Black_Tree
+	void LeftRotate(Node* x);
+	void RightRotate(Node* y);
+
 
 private:
-	Node* _root = nullptr;
+	Node* _root = nullptr; 
 	//RED-BLACK
+	// 기존 없을 때마다 nullcheck 할때 사용되며 색의 속성(Black)도 가지고 있는
+	// 자식노드 공간이 비어있는 것을 표현할 때 사용된다.
 	Node* _nil = nullptr;
 
 };
 
 // 균형을 맞춰주는 구조를 추가로 제작해줘야 함(Rebalancing)
 
+
+// BST에서 아무것도 없는 공간을 Nil 노드라고 함
+// nullptr로 표현해도 되고 bool 변수하나를 할당해서 external 이라는 bool 값으로 할당해도 됨, 일종의 Default Node
