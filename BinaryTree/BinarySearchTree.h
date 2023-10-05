@@ -10,20 +10,35 @@ using namespace std;
 //       [ ]
 //  [ ]      [ ]
 
+// Red-Black 트리를 위한 수정
+enum class Color
+{
+	Red = 0,
+	Black = 1,
+};
+
+
+
 struct Node
 {
 	Node* _parent = nullptr;
 	Node* _left = nullptr;
 	Node* _right = nullptr;
 	int _key = {};
-
+	Color color = Color::Black;
 };
 
-
-
+// RedBlack Tree
+// 1. 모든 노드는 Red 또는 Black의 색 속성을 가진다.
+// 2. Root 노드는 Black 이다.
+// 3. Leaf(NIL)는 Black 이다.
+// 4. Red 노드의 자식노드는 Black이다. 즉 연속된 Red 노드의 반복이 생성 X
+// 5.각 노드로 부터 - 리프로 가는 경로들은 모두 같은 수의 Black 노드를 가진다.
 class BinarySearchTree
 {
 public:
+	BinarySearchTree();
+	~BinarySearchTree();
 	void Print() { Print(_root, 10, 0); };
 	void Print(Node* node, int x, int y);
 
@@ -44,6 +59,8 @@ public:
 
 private:
 	Node* _root = nullptr;
+	//RED-BLACK
+	Node* _nil = nullptr;
 
 };
 

@@ -11,6 +11,17 @@ void SetCursorPosition(int x, int y)
 	::SetConsoleCursorPosition(output, pos);
 }
 
+BinarySearchTree::BinarySearchTree()
+{
+	_nil = new Node();
+	_root = _nil;
+}
+
+BinarySearchTree::~BinarySearchTree()
+{
+	delete _nil;
+}
+
 void BinarySearchTree::Print(Node* node, int x, int y)
 {
 	if (node == nullptr)
