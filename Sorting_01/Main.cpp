@@ -69,10 +69,9 @@ void InsertionSort(vector<int>& v)
 				v[j + 1] = v[j];
 			else
 				break;
-		}
+		} /*for(j=i-1; j >= 0 && v[j] > insertData ;j--)*/
 		v[j + 1] = insertData;
 	}
-
 }
 
 void HeapSort(vector<int>& v)
@@ -162,6 +161,47 @@ void MergeSort(vector<int>& v, int left, int right)
 }
 // 시간복잡도 분할(logN) * 결합(N) => O(NlogN)
 
+
+
+int Partition(vector<int>& v, int left, int right)
+{
+	int pivot = v[left];
+	int low = left + 1;
+	int high = right;
+
+	while (low <= high)
+	{
+		while (low <= right && pivot >= v[low])
+			low++;
+
+		while (high >= left + 1 && pivot <= v[high])
+			high--;
+		if (low < high)
+			swap(v[low], v[high]);
+	}
+
+	swap(v[left], v[high]);
+	return high;
+}
+// [5][1][3][7][9][2][4][6][8]
+//	p
+//	  low					high
+void QuickSort(vector<int>& v, int left, int right)
+{
+	if (left > right)
+		return;
+	int pivot = Partition(v, left, right);
+	QuickSort(v, left, pivot -1);
+	QuickSort(v, pivot + 1, right);
+}
+// 시간 복잡도
+// 루프가 두번이지만 양쪽의 High와 Low가 가운데를 향해 움직이기 때문에 N번
+// Partition의 호출 횟수가 곱해짐
+// Pivot의 최대, 또는 최소 값일 경우 한쪽에 몰리므로 최악의 상황을 가짐 즉 데이터 개수인 N번만큼 호출됨
+// 최악의 경우 O( N²), 평균적으론 O(NlogN)
+// 같은 NlogN이여도 다 다름 merge의 경우 임시 공간을 생성해서 복사하기 때문에 상대적으로 느림
+// QuickSort의 경우 복사도 없고 대부분의 상황에서 빠르게 작동함
+
 int main()
 {
 	//vector<int> v{ 1,5,3,4,2 };
@@ -178,7 +218,8 @@ int main()
 	//Selection(v);
 	//InsertionSort(v);
 	//HeapSort(v);
-	MergeSort(v,0,v.size()-1);
+	//MergeSort(v,0,v.size()-1);
+	QuickSort(v, 0, v.size() - 1);
 	int a = 1;
 
 }
