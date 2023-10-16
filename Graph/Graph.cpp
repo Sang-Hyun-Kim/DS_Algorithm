@@ -139,7 +139,8 @@ int main()
     // BFS
     BFS b;
     b.CreateGraph2();
-    b.BFSearch_2(0);
+    //b.BFSearch_2(0);
+    b.BFSearch_All();
     //b.CreateGraph2();
     //b.BFSearch_2(0);
 }
